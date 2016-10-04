@@ -16,12 +16,14 @@ public class WebContentManagerFactory {
     private WindowManager windowManager;
     private SoundCloudSearcher soundCloudSearcher;
     private SoundCloudDownloader soundCloudDownloader;
+    private DirectLinksSearcher directLinksSearcher;
     
     private WebContentManagerFactory(){
         lastfmAPI = new LastfmAPI();
         spotifyAPI = new SpotifyAPI();
         youTubeDownloader = new YouTubeDownloader();
         youTubeSearcher = new YouTubeSearcher(); 
+        directLinksSearcher = new DirectLinksSearcher();
         windowManager = new WindowManager();
         soundCloudSearcher = new SoundCloudSearcher();
         soundCloudDownloader = new SoundCloudDownloader();
@@ -62,7 +64,7 @@ public class WebContentManagerFactory {
         return soundCloudDownloader;
     }
     
-    
-    
-    
+    public DirectLinksSearcher getDirectLinksSearcher(){
+        return directLinksSearcher;
+    }
 }

@@ -12,6 +12,7 @@ import javax.swing.table.TableModel;
 import models.MetaData;
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONException;
+import webcontentmanager.DirectDownloader;
 import webcontentmanager.LastfmAPI;
 import webcontentmanager.SongDownloader;
 import webcontentmanager.SoundCloudDownloader;
@@ -25,7 +26,7 @@ import webcontentmanager.YouTubeDownloader;
  */
 public class DownloadTask implements Runnable {
 
-    private SongDownloader songDownloader = new YouTubeDownloader();
+    private SongDownloader songDownloader;
     private LastfmAPI lastfmAPI = WebContentManagerFactory.getInstance().getLastfmAPI();
     private SpotifyAPI spotifyAPI = WebContentManagerFactory.getInstance().getSpotifyAPI();
     private String path;
@@ -94,16 +95,31 @@ public class DownloadTask implements Runnable {
             songDownloader = new YouTubeDownloader();
         else if (source == "SoundCloud")
             songDownloader = new SoundCloudDownloader();
+        else if (source == "direct")
+            songDownloader = new DirectDownloader();
         model.setValueAt("Proc metadata", model.getRowCount()-1, 3);
     }
+    
     
     @Override
     public void run() {
         final int row = model.getRowCount() - 1;
         MetaData metaData = new MetaData();
-        try {
+        if (source == "direct"){
+            metaData.setArtist("test");
+            metaData.setAlbum("test");
+            metaData.setPath(path + title + ".mp3");
+            metaData.setDurationInSec(10);
+            metaData.setTrackName("directDownloadTest");
+        } else {
+            try {
             metaData = setTrackInfo(title, artist, metaData);
             metaData.setPath(createPath(metaData, path));
+            } catch (IOException ex) {
+                Logger.getLogger(DownloadTask.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        try {
             model.setValueAt("Downloading", row, 3);
             if (this.songDownloader.downloadSong(metaData.getPath(), param, model) == -1){
                 //new File(metaData.getPath()).delete();
@@ -115,8 +131,8 @@ public class DownloadTask implements Runnable {
             model.setValueAt("Deleting temp", row, 3);
             new File(metaData.getPath()).delete();
             metaData.setPath(FilenameUtils.removeExtension(metaData.getPath()) + ".wav");
-            model.setValueAt("Saving to DB", row, 3);
-            DBHandler.getInstance().InsertTrack(metaData);
+            //model.setValueAt("Saving to DB", row, 3);
+            //DBHandler.getInstance().InsertTrack(metaData);
             model.setValueAt("Finished", row, 3);
         } catch (IOException | IllegalArgumentException | EncoderException | JSONException ex) { //| IllegalArgumentException | EncoderException ex) {
             Logger.getLogger(DownloadTask.class.getName()).log(Level.SEVERE, null, ex);

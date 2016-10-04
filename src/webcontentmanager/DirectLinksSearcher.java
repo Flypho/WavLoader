@@ -23,12 +23,7 @@ public class DirectLinksSearcher implements LinkSearcher {
 
     @Override
     public ArrayList<String[]> searchLinks(String dataToSearch) throws IOException {
-        ArrayList <String[]> directLinks = new ArrayList<String[]>();
-        ArrayList <String[]> tempLink = removeNonMatchingLinks(findAllLinks(dataToSearch));
-        for (String [] elem : tempLink){
-            System.out.println(elem[0] + " " + elem[1]);
-        }
-        return directLinks;
+        return removeNonMatchingLinks(findAllLinks(dataToSearch));
     }
     
     
@@ -37,7 +32,7 @@ public class DirectLinksSearcher implements LinkSearcher {
         String regex = "([^\\s]+(\\.(?i)(jpg|JPG|gif|GIF|doc|DOC|pdf|PDF|html|HTML|js|JS|png|PNG|css|CSS))$)";
         for (String elem : linksArray){
             String fileName;
-            if (!elem.matches(regex) && (fileName = getFileName(elem)) != null){
+            if (!elem.matches(regex) && (fileName = getFileName(elem)) != null && !fileName.isEmpty()){
                 String [] temp = new String[2];
                 temp[0] = elem;
                 temp[1] = fileName;

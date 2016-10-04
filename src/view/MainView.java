@@ -188,7 +188,7 @@ public class MainView extends javax.swing.JFrame {
     }//GEN-LAST:event_SearchButtonMouseClicked
 
     private void downloadAllButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadAllButtonMouseClicked
-        // TODO add your handling code here:
+        WebContentManagerFactory.getInstance().getWindowManager().downloadAll(downloadAllField.getText(), DownloadTable);
     }//GEN-LAST:event_downloadAllButtonMouseClicked
 
     /**
