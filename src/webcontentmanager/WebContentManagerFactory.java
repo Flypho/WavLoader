@@ -1,5 +1,7 @@
 package webcontentmanager;
 
+import javax.swing.JFrame;
+import view.MainView;
 import view.WindowManager;
 import webcontentmanager.*;
 
@@ -17,6 +19,9 @@ public class WebContentManagerFactory {
     private SoundCloudSearcher soundCloudSearcher;
     private SoundCloudDownloader soundCloudDownloader;
     private DirectLinksSearcher directLinksSearcher;
+    private MainView mainView;
+    
+    
     
     private WebContentManagerFactory(){
         lastfmAPI = new LastfmAPI();
@@ -67,4 +72,10 @@ public class WebContentManagerFactory {
     public DirectLinksSearcher getDirectLinksSearcher(){
         return directLinksSearcher;
     }
+
+    public void setMainView(MainView mainView) {
+        this.mainView = mainView;
+    }
+    
+    
 }

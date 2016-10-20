@@ -11,8 +11,8 @@ import org.json.JSONException;
 public class DirectDownloader implements SongDownloader {
 
     @Override
-    public Long downloadSong(String path, String param, TableModel model) throws IOException, JSONException {
-        return SongDownloader.downloadUsingNIO(path, param, model);
+    public Long downloadSong(String path, String param, TableModel model, int row) throws IOException, JSONException {
+        return SongDownloader.downloadUsingNIO(param, path, model, row);
     }
     
 }

@@ -20,9 +20,11 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -45,6 +47,21 @@ public class WindowManager {
 
     private boolean locker;
     private String artist;
+    private JRadioButton customLocation, defaultLocation;
+    private JCheckBox saveOriginalFormat, createAlbumFolder;
+    private JTextField folderLocation;
+    
+    private String getLocation(){
+        String location;
+        if (customLocation.isSelected()){
+            location = folderLocation.getText();
+        } else {
+            location = System.getProperty("user.home") + "\\downloads\\";
+        }
+        return location;
+    }
+    
+    
 
     public void populateSearchTable(String title, JTextField artistField, JTable searchTable, JTable downloadTable) {
         DefaultTableModel model = (DefaultTableModel) searchTable.getModel();
@@ -88,7 +105,8 @@ public class WindowManager {
                         String source = target.getValueAt(row, 1).toString();
                         populateDownloadTable(target.getValueAt(row, 0).toString(), source, "Test", downloadTable);
                         try {
-                            new Thread(new DownloadTask(System.getProperty("user.dir") + "\\" + "download_tests" + "\\", searchResults.get(row)[0], artist.trim(), title.trim(), downloadTable.getModel(), source)).start();
+                            int rowDownload = downloadTable.getModel().getRowCount(); 
+                            new Thread(new DownloadTask(getLocation(), searchResults.get(row)[0], artist.trim(), title.trim(), downloadTable.getModel(), rowDownload, source, saveOriginalFormat.isSelected(), createAlbumFolder.isSelected())).start();
                         } catch (IOException ex) {
                             Logger.getLogger(SearchButtonEditor.class.getName()).log(Level.SEVERE, null, ex);
                         } catch (JSONException ex) {
@@ -128,8 +146,11 @@ public class WindowManager {
     }
 
     public void downloadAll(String url, JTable downloadTable) {
-        if (url == null || url.isEmpty())
+        System.out.println("LOCATION " + getLocation() + " ORIGINALFORMAT:" + this.saveOriginalFormat.isSelected() + " createALBUM: " + this.createAlbumFolder.isSelected());
+        if (url == null || url.isEmpty()) {
             return;
+        }
+
         
         ArrayList<String[]> results = null;
         try {
@@ -138,11 +159,51 @@ public class WindowManager {
             if (results != null) {
                 for (String[] elem : results) {
                     populateDownloadTable(elem[1], elem[0], "Test", downloadTable);
-                    new Thread(new DownloadTask(System.getProperty("user.dir") + "\\" + "download_tests" + "\\", url, "test1", "test2", downloadTable.getModel(), "direct")).start();
+                    int row = downloadTable.getModel().getRowCount(); 
+                    new Thread(new DownloadTask(getLocation(), elem[0], "test1", "test2", downloadTable.getModel(), row, "direct", saveOriginalFormat.isSelected(), createAlbumFolder.isSelected())).start();
                 }
             }
         } catch (IOException | JSONException ex) {
             Logger.getLogger(WindowManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void chooseFolder(JTextField location) {
+        //int result;
+        String choosertitle = "Select download folder";
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle(choosertitle);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            location.setText(chooser.getSelectedFile().toString());
+        }
+    }
+
+    public void setCustomLocation(JRadioButton customLocation) {
+        this.customLocation = customLocation;
+    }
+
+    public void setDefaultLocation(JRadioButton defaultLocation) {
+        this.defaultLocation = defaultLocation;
+    }
+
+    public void setSaveOriginalFormat(JCheckBox saveOriginalFormat) {
+        this.saveOriginalFormat = saveOriginalFormat;
+    }
+
+    public void setCreateAlbumFolder(JCheckBox createAlbumFolder) {
+        this.createAlbumFolder = createAlbumFolder;
+    }
+
+    public void setFolderLocation(JTextField folderLocation) {
+        this.folderLocation = folderLocation;
+    }
+    
+    
+    
+    
 }

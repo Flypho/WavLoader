@@ -52,6 +52,8 @@ public class DirectLinksSearcher implements LinkSearcher {
             if ((fileName = connection.getHeaderField("Content-Disposition")) != null) {
                 int beginning = fileName.lastIndexOf(contentKey) + contentKey.length();
                 fileName = fileName.substring(beginning);
+            } else {
+                fileName = link.substring(link.lastIndexOf("/"));
             }
         }
         

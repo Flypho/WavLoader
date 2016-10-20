@@ -23,7 +23,7 @@ public class YouTubeDownloader implements SongDownloader {
     final String SIZE_PARAM = "&filesize=1";
     
     @Override
-    public Long downloadSong(String directory, String videoId, TableModel model) throws IOException {
+    public Long downloadSong(String directory, String videoId, TableModel model, int row) throws IOException {
         String downloadURL = null;
         String jsonString = RequestHelper.sendGetHttpRequest(BASE_YTINMP3_URL + BASE_YT_URL + videoId + SIZE_PARAM);
         JSONObject response = null;
@@ -42,7 +42,7 @@ public class YouTubeDownloader implements SongDownloader {
             RequestHelper.sendGetHttpRequest(downloadURL);
         }
         System.out.println("Downloading SONG. Directory: " + directory + " videoId: " + videoId + " ReqURL: " + BASE_YTINMP3_URL + BASE_YT_URL + videoId);
-        Long tempFileSize = SongDownloader.downloadUsingNIO(downloadURL, directory, model);
+        Long tempFileSize = SongDownloader.downloadUsingNIO(downloadURL, directory, model, row);
         /*for (int i = 0; i < 3; i++) {
             if ((fileSize == null || !Objects.equals(fileSize, tempFileSize)) || tempFileSize == -1) {
                 System.out.println("FILESIZE: " + fileSize);

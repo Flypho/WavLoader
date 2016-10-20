@@ -6,6 +6,7 @@ import database.DBHandler;
 import it.sauronsoftware.jave.EncoderException;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.TableModel;
@@ -36,6 +37,7 @@ public class DownloadTask implements Runnable {
     private String artist;
     private MetaData metaData;
     private String source;
+    private int row;
     
     private String createPath(MetaData metaData, String basepath) throws IOException{
         if (basepath == null) {
@@ -84,13 +86,14 @@ public class DownloadTask implements Runnable {
         return temp;
     }
     
-    public DownloadTask(String path, String param, String artist, String title, TableModel model, String source) throws IOException, JSONException{
+    public DownloadTask(String path, String param, String artist, String title, TableModel model, int row, String source, boolean saveOriginalFormat, boolean createAlbumFolder) throws IOException, JSONException{
         this.path = path;
         this.param = param;
         this.model = model;
         this.artist = artist;
         this.title = title;
         this.source = source;
+        this.row = row;
         if (source == "YouTube")
             songDownloader = new YouTubeDownloader();
         else if (source == "SoundCloud")
@@ -103,14 +106,14 @@ public class DownloadTask implements Runnable {
     
     @Override
     public void run() {
-        final int row = model.getRowCount() - 1;
+        final int row = this.row - 1;//model.getRowCount() - 1;
         MetaData metaData = new MetaData();
         if (source == "direct"){
             metaData.setArtist("test");
             metaData.setAlbum("test");
-            metaData.setPath(path + title + ".mp3");
             metaData.setDurationInSec(10);
-            metaData.setTrackName("directDownloadTest");
+            metaData.setTrackName("directDownloadTest" + ThreadLocalRandom.current().nextInt(0, 1000000+1));
+            metaData.setPath(path + metaData.getTrackName() + ".mp3");
         } else {
             try {
             metaData = setTrackInfo(title, artist, metaData);
@@ -121,7 +124,8 @@ public class DownloadTask implements Runnable {
         }
         try {
             model.setValueAt("Downloading", row, 3);
-            if (this.songDownloader.downloadSong(metaData.getPath(), param, model) == -1){
+            System.out.println(param);
+            if (this.songDownloader.downloadSong(metaData.getPath(), param, model, row) == -1){
                 //new File(metaData.getPath()).delete();
                 //model.setValueAt("Failed", row, 3);
                 //return;
@@ -134,7 +138,7 @@ public class DownloadTask implements Runnable {
             //model.setValueAt("Saving to DB", row, 3);
             //DBHandler.getInstance().InsertTrack(metaData);
             model.setValueAt("Finished", row, 3);
-        } catch (IOException | IllegalArgumentException | EncoderException | JSONException ex) { //| IllegalArgumentException | EncoderException ex) {
+        } catch (IOException | IllegalArgumentException | EncoderException| JSONException ex) { //| IllegalArgumentException | EncoderException ex) {
             Logger.getLogger(DownloadTask.class.getName()).log(Level.SEVERE, null, ex);
             model.setValueAt("Failed", row, 3);
         }

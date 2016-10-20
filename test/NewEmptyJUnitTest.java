@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import webcontentmanager.DirectDownloader;
 import webcontentmanager.LinkSearcher;
 import static webcontentmanager.LinkSearcher.USER_AGENT;
 import webcontentmanager.SongDownloader;
@@ -92,31 +93,63 @@ public class NewEmptyJUnitTest {
         }
     }
     */
+    private HttpURLConnection openConnection(String urlStr) throws MalformedURLException, IOException{
+       if (urlStr.contains("https"))
+            return (HttpsURLConnection) new URL(urlStr).openConnection();
+        else
+            return (HttpURLConnection) new URL(urlStr).openConnection();
+    }
     
+    private boolean checkRedirection(int statusCode){
+        if (statusCode == HttpURLConnection.HTTP_MOVED_TEMP || statusCode == HttpURLConnection.HTTP_MOVED_TEMP || statusCode == HttpURLConnection.HTTP_SEE_OTHER)
+            return true;
+        else
+            return false;
+    }
     @Test
     public void TestDirectDownloader() throws MalformedURLException, IOException{
-       URLConnection connection;
-       //String urlStr = "http://images.artistdirect.com/audio/oldmusic/slogans_marley.wma";
-       String urlStr = "http://mp3-center.net/download.php?name=o+rocchi+f+godi+jungle+birds+italian+library+jazz+funk+holy+grail+w+killer+drum+breaks&url=aHR0cHM6Ly9hcGkuc291bmRjbG91ZC5jb20vdHJhY2tzLzIzMDMxNjMwMy9zdHJlYW0/Y2xpZW50X2lkPTNlYmFiZjkwMzllODM5YTkzN2JkMWY1M2Y5ZDcxYWYz";
-       //String urlStr = "http://srv.tonefuse.com/showads/track/srvclk.php?aid=39383411&search=22%20(VA%20%27Sampled%20vol.3%20-%2040%20Original%20Soul%20Jazz%20Funk%20&%20Disco%20Tracks%27%20cd1%20(Virgin)%20-%2015%20-%20Quincy%20Jones%20%E2%80%93%20Summer%20In%20the%20City%20[Nightmares%20on%20Wax%20-%20Les%20Nuits])";
-       String directory = "D:\\Projekty\\NetBeansProjects\\WavLoader\\download_tests\\test2.mp3";
-        URL url = new URL(urlStr);
-        //HttpURLConnection httpConnection = (HttpURLConnection) (url.openConnection());
-        if (urlStr.contains("https"))
-            connection = (HttpsURLConnection) url.openConnection();
-        else
-            connection = (HttpURLConnection) (url.openConnection());
+       HttpURLConnection connection;
+       String cookies;
+       String urlStr = "https://archive.org/download/Macro_Form_Who_We_Are_in_slow_time/04_outoftime.mp3";
+       String directory = "C:\\Users\\MGolosz\\Documents\\WavLoader\\download_tests\\test2.mp3";
+       
+       connection = openConnection(urlStr);
+        
+        if (connection.getHeaderField("Content-Disposition") != null && !connection.getHeaderField("Content-Disposition").isEmpty()){
+            System.out.println(connection.getHeaderField("Content-Disposition"));
+        }
+        
+        int statusCode = connection.getResponseCode();
+        System.out.println(connection.getHeaderField("Location"));
+        while (checkRedirection(statusCode)) {
+            urlStr = connection.getHeaderField("Location");
+            cookies = connection.getHeaderField("Set-Cookie");
+            System.out.println(urlStr);
+            connection = openConnection(urlStr);
+            connection.setRequestMethod("GET");
+            if (cookies != null){
+                connection.setRequestProperty("Cookie", cookies);
+            }
+            //connection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"); 
+            connection.addRequestProperty("Accept-Encoding", "gzip, deflate"); 
+            connection.addRequestProperty("User-Agent", "runscope/0.1");
+            statusCode = connection.getResponseCode();
+            System.out.println(statusCode);
+
+        }
+        System.out.println(statusCode);
+        
         long completeFileSize = connection.getContentLength();
-        System.out.println(connection.getHeaderField("Content-Disposition"));
+        
         if (completeFileSize == -1) {
             try {
                 System.out.println("BUG");
                 TimeUnit.SECONDS.sleep(5);
-                connection = url.openConnection();
+                connection = openConnection(urlStr);
                 completeFileSize = connection.getContentLength();
                 System.out.println(completeFileSize);
             } catch (InterruptedException ex) {
-                Logger.getLogger(YouTubeDownloader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DirectDownloader.class.getName()).log(Level.SEVERE, null, ex);
             }
         } if (completeFileSize == -1){
             return;

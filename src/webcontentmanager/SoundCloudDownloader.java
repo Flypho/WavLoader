@@ -15,8 +15,8 @@ public class SoundCloudDownloader implements SongDownloader {
     private String BASE_URL = "http://9soundclouddownloader.com/download-sound-track";
 
     @Override
-    public Long downloadSong(String directory, String downloadURL, TableModel model) throws IOException, JSONException {
-        return SongDownloader.downloadUsingNIO(downloadURL, directory, model);
+    public Long downloadSong(String directory, String downloadURL, TableModel model, int row) throws IOException, JSONException {
+        return SongDownloader.downloadUsingNIO(downloadURL, directory, model, row);
     }
     
 }

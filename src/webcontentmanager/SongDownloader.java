@@ -28,7 +28,7 @@ import org.json.JSONException;
  */
 public interface SongDownloader {
     
-    static Long downloadUsingNIO(String urlStr, String directory, TableModel model) throws IOException {
+    static Long downloadUsingNIO(String urlStr, String directory, TableModel model, int row) throws IOException {
         URLConnection connection;
         URL url = new URL(urlStr);
         //HttpURLConnection httpConnection = (HttpURLConnection) (url.openConnection());
@@ -55,7 +55,7 @@ public interface SongDownloader {
         byte[] data = new byte[1024];
         long downloadedFileSize = 0;
         int x = 0;
-        final int row = model.getRowCount() - 1;
+        final int currentrow = row;
         while ((x = in.read(data, 0, 1024)) >= 0) {
             downloadedFileSize += x;
             final double currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100d);
@@ -63,7 +63,7 @@ public interface SongDownloader {
                 @Override
                 public void run() {
                     if (currentProgress > 0)
-                        model.setValueAt(currentProgress, row, 0);
+                        model.setValueAt(currentProgress, currentrow, 0);
                 }
             });
 
@@ -86,8 +86,10 @@ public interface SongDownloader {
         return fileSize;
      }
     
-    Long downloadSong(String path, String param, TableModel model) throws IOException, JSONException;
+    Long downloadSong(String path, String param, TableModel model, int row) throws IOException, JSONException;
 
+}
+    /*
     public static void alternativeDownloadSong(String directory, String videoId, TableModel model) throws IOException, InterruptedException {
         final String BASE_YT_URL = "http://www.youtube.com/watch?v=";
         final String BASE_DWNLD_URL = "http://youtubeconverter.me/downloadz/api.php?output=";
@@ -104,5 +106,6 @@ public interface SongDownloader {
         downloadUsingNIO(downloadLink, directory, model);
     }  //http://youtubeconverter.me/downloadz/api.php?output=yt/iOKV9Stri_M/64~~256~~Tool-Vicarious_uuid-57d6e7ff47b58.mp3
 }
+*/
 
 

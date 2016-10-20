@@ -3,35 +3,25 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/view/WindowManager.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/view/MainView.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/SongDownloader.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/WebContentManagerFactory.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/converters/WavConverter.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/LastfmAPI.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/test/database/DBTest.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/models/MetaData.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/view/ProgressCellRender.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/MetadataRetriever.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/SoundCloudSearcher.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/test/MetadataAPITest.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/test/NewEmptyJUnitTest.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/YouTubeSearcher.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/test/DownloadSoundCloudTest.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/database/DBHandler.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/view/SearchButtonEditor.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/wavloader/WavLoader.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/SoundCloudDownloader.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/tasks/ButtonLockTask.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/SpotifyAPI.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/RequestHelper.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/LinkSearcher.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/database/DAOImpl.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/test/LinkSearcherTests.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/test/converters/WavConverterTest.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/DirectLinksSearcher.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/webcontentmanager/YouTubeDownloader.java</file>
-            <file>file:/D:/Projekty/NetBeansProjects/WavLoader/src/tasks/DownloadTask.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/YouTubeSearcher.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/view/WindowManager.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/SoundCloudDownloader.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/test/NewEmptyJUnitTest.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/test/MetadataAPITest.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/YouTubeDownloader.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/SongDownloader.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/DirectDownloader.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/WebContentManagerFactory.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/test/database/DBTest.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/view/MainView.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/test/DownloadSoundCloudTest.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/tasks/ButtonLockTask.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/tasks/DownloadTask.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/test/converters/WavConverterTest.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/test/LinkSearcherTests.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/view/SearchButtonEditor.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/LinkSearcher.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/DirectLinksSearcher.java</file>
         </group>
     </open-files>
 </project-private>
