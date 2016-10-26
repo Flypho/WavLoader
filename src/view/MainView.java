@@ -26,6 +26,7 @@ public class MainView extends javax.swing.JFrame {
         downloadWindowManager.setDefaultLocation(RadioDefault);
         downloadWindowManager.setSaveOriginalFormat(OriginalFormatCheck);
         downloadWindowManager.setFolderLocation(SelectedFolderField);
+        MyLogger.init(Logger);
         
     }
     
@@ -82,6 +83,9 @@ public class MainView extends javax.swing.JFrame {
         RadioCustom = new javax.swing.JRadioButton();
         OriginalFormatCheck = new javax.swing.JCheckBox();
         CreateAlbumFolderCheck = new javax.swing.JCheckBox();
+        LogLabel = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        Logger = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         FileMenu = new javax.swing.JMenu();
         MenuSettings = new javax.swing.JMenuItem();
@@ -172,6 +176,13 @@ public class MainView extends javax.swing.JFrame {
 
         CreateAlbumFolderCheck.setText("Create artist/album folders");
 
+        LogLabel.setText("Logger");
+
+        Logger.setEditable(false);
+        Logger.setColumns(20);
+        Logger.setRows(5);
+        jScrollPane1.setViewportView(Logger);
+
         FileMenu.setText("File");
 
         MenuSettings.setText("Settings");
@@ -209,30 +220,36 @@ public class MainView extends javax.swing.JFrame {
                                     .addComponent(SearchButton))
                                 .addComponent(ArtistLabel)))
                         .addComponent(ResultsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(RadioDefault)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(RadioCustom))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(DownloadLabel)
-                            .addGap(182, 182, 182))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(CreateAlbumFolderCheck)
-                                    .addGap(44, 44, 44)
-                                    .addComponent(OriginalFormatCheck))
+                        .addGap(49, 49, 49)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(SelectedFolderField, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(SelectFolderButton)
+                                .addGap(74, 447, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(SelectedFolderField, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(CreateAlbumFolderCheck)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(SelectFolderButton))
-                                    .addComponent(DownloadScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGap(30, 30, 30))))
-                .addGap(44, 44, 44))
+                                        .addComponent(OriginalFormatCheck))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(RadioDefault)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(RadioCustom))
+                                        .addComponent(DownloadScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(70, 70, 70)
+                                .addComponent(jScrollPane1)
+                                .addContainerGap())))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(221, 221, 221)
+                        .addComponent(DownloadLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(LogLabel)
+                        .addGap(163, 163, 163))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -246,11 +263,14 @@ public class MainView extends javax.swing.JFrame {
                     .addComponent(SearchButton)
                     .addComponent(ArtistTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(TitleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(DownloadLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(DownloadLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LogLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(DownloadScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
-                    .addComponent(ResultsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(DownloadScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                        .addComponent(ResultsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(RadioDefault)
@@ -333,6 +353,8 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JTable DownloadTable;
     private javax.swing.JMenu EditMenu;
     private javax.swing.JMenu FileMenu;
+    private javax.swing.JLabel LogLabel;
+    private static javax.swing.JTextArea Logger;
     private javax.swing.JMenuItem MenuSettings;
     private javax.swing.JCheckBox OriginalFormatCheck;
     private javax.swing.JRadioButton RadioCustom;
@@ -348,5 +370,6 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JButton downloadAllButton;
     private javax.swing.JTextField downloadAllField;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

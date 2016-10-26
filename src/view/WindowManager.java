@@ -160,7 +160,7 @@ public class WindowManager {
                 for (String[] elem : results) {
                     populateDownloadTable(elem[1], elem[0], "Test", downloadTable);
                     int row = downloadTable.getModel().getRowCount(); 
-                    new Thread(new DownloadTask(getLocation(), elem[0], "test1", "test2", downloadTable.getModel(), row, "direct", saveOriginalFormat.isSelected(), createAlbumFolder.isSelected())).start();
+                    new Thread(new DownloadTask(getLocation(), elem[0], "", elem[1], downloadTable.getModel(), row, url, saveOriginalFormat.isSelected(), createAlbumFolder.isSelected())).start();
                 }
             }
         } catch (IOException | JSONException ex) {
@@ -169,9 +169,7 @@ public class WindowManager {
     }
 
     public void chooseFolder(JTextField location) {
-        //int result;
         String choosertitle = "Select download folder";
-
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new java.io.File("."));
         chooser.setDialogTitle(choosertitle);

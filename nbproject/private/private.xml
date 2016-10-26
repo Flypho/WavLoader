@@ -11,6 +11,7 @@
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/YouTubeDownloader.java</file>
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/SongDownloader.java</file>
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/DirectDownloader.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/view/MyLogger.java</file>
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/WebContentManagerFactory.java</file>
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/test/database/DBTest.java</file>
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/view/MainView.java</file>
@@ -18,6 +19,7 @@
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/tasks/ButtonLockTask.java</file>
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/tasks/DownloadTask.java</file>
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/test/converters/WavConverterTest.java</file>
+            <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/RequestHelper.java</file>
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/test/LinkSearcherTests.java</file>
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/view/SearchButtonEditor.java</file>
             <file>file:/C:/Users/MGolosz/Documents/WavLoader/src/webcontentmanager/LinkSearcher.java</file>

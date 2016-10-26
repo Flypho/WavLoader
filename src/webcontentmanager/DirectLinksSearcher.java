@@ -23,9 +23,15 @@ public class DirectLinksSearcher implements LinkSearcher {
 
     @Override
     public ArrayList<String[]> searchLinks(String dataToSearch) throws IOException {
+        if (!getFileName(dataToSearch).isEmpty()) {
+            ArrayList<String[]> singleArrayList = new ArrayList<String[]>();
+            String[] elem = {dataToSearch, getFileName(dataToSearch)};
+            singleArrayList.add(elem);
+            return singleArrayList;
+        }
         return removeNonMatchingLinks(findAllLinks(dataToSearch));
     }
-    
+
     
     private ArrayList<String[]> removeNonMatchingLinks(ArrayList<String> linksArray) throws IOException{
         ArrayList<String[]> removed = new ArrayList<String[]>();
@@ -53,7 +59,7 @@ public class DirectLinksSearcher implements LinkSearcher {
                 int beginning = fileName.lastIndexOf(contentKey) + contentKey.length();
                 fileName = fileName.substring(beginning);
             } else {
-                fileName = link.substring(link.lastIndexOf("/"));
+                fileName = link.substring(link.lastIndexOf("/") + 1);
             }
         }
         
