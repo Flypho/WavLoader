@@ -13,6 +13,7 @@ import javax.swing.table.TableModel;
 import models.MetaData;
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONException;
+import view.MyLogger;
 import webcontentmanager.DirectDownloader;
 import webcontentmanager.LastfmAPI;
 import webcontentmanager.SongDownloader;
@@ -42,11 +43,16 @@ public class DownloadTask implements Runnable {
     private boolean saveOriginalFormat;
     private boolean direct = false;
     
-    private String createSearchedPath(MetaData metaData, String basepath) throws IOException{
+    private String createSearchedPath(MetaData metaData, String basepath, boolean createAlbumFolder) throws IOException {
         if (basepath == null) {
             throw new IOException();
         }
-        String dir = basepath + metaData.getArtist() + "\\" + metaData.getAlbum();
+        String dir;
+        if (createAlbumFolder){
+            dir = basepath + metaData.getArtist() + "\\" + metaData.getAlbum();
+        } else {
+            dir = basepath;
+        }
         File fileDir = new File(dir);
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
@@ -54,13 +60,16 @@ public class DownloadTask implements Runnable {
             }
         }
         int i = 1;
-        File file = new File(dir + "\\" + metaData.getTrackName() + ".mp3");
-        while (file.exists()){
-            file = new File(dir + "\\" + metaData.getTrackName() + "(" + i + ")" + ".mp3");
+        
+        
+        File fileMP3 = new File(dir + "\\" + metaData.getTrackName() + ".mp3");
+        File fileWav = new File(dir + "\\" + metaData.getTrackName() + ".wav");
+        while (fileMP3.exists() || fileWav.exists()){
+            fileMP3 = new File(dir + "\\" + metaData.getTrackName() + "(" + i + ")" + ".mp3");
+            fileWav = new File(dir + "\\" + metaData.getTrackName() + "(" + i + ")" + ".wav");
             i++;
         }
-        
-        return file.getAbsolutePath();
+        return fileMP3.getAbsolutePath();
     }
     
     private String createDirectPath(MetaData metaData, String title, String basepath, String source, boolean createAlbumFolder) throws IOException {
@@ -111,6 +120,7 @@ public class DownloadTask implements Runnable {
             } catch (IOException | JSONException ex) {
                 if (title == null || title.isEmpty()) {
                     metaData.setTrackName("unknown");
+                    MyLogger.log("No metadata found. Setting to unknown.");
                 } else {
                     metaData.setTrackName(title);
                 }
@@ -158,25 +168,24 @@ public class DownloadTask implements Runnable {
             //metaData.setPath(path + title);
             try {
                 metaData.setPath(createDirectPath(metaData, title, path, source, createAlbumFolder));
-                System.out.println(metaData.getPath());
             } catch (IOException ex) {
-                Logger.getLogger(DownloadTask.class.getName()).log(Level.SEVERE, null, ex);
+                MyLogger.log("Wrong path: " + metaData.getPath());
             }
         } else {
             try {
             metaData = setTrackInfo(title, artist, metaData);
-            metaData.setPath(createSearchedPath(metaData, path));
+            metaData.setPath(createSearchedPath(metaData, path, createAlbumFolder));
             } catch (IOException ex) {
-                Logger.getLogger(DownloadTask.class.getName()).log(Level.SEVERE, null, ex);
+                MyLogger.log("Error while creating folders for: " + metaData.getPath());
             }
         }
         try {
             model.setValueAt("Downloading", row, 3);
-            System.out.println(param);
             if (this.songDownloader.downloadSong(metaData.getPath(), param, model, row) == -1){
-                //new File(metaData.getPath()).delete();
-                //model.setValueAt("Failed", row, 3);
-                //return;
+                new File(metaData.getPath()).delete();
+                model.setValueAt("Failed", row, 3);
+                MyLogger.log("Connection error for file: " + metaData.getPath());
+                return;
             }
             model.setValueAt("Wav converting", row, 3);
             WavConverter.mp3ToWav(metaData.getPath(), FilenameUtils.removeExtension(metaData.getPath()) + ".wav");
@@ -188,10 +197,16 @@ public class DownloadTask implements Runnable {
             //model.setValueAt("Saving to DB", row, 3);
             //DBHandler.getInstance().InsertTrack(metaData);
             model.setValueAt("Finished", row, 3);
-        } catch (IOException | IllegalArgumentException | EncoderException| JSONException ex) { //| IllegalArgumentException | EncoderException ex) {
-            Logger.getLogger(DownloadTask.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
+            MyLogger.log("Metadata error for file: " + metaData.getPath());
             model.setValueAt("Failed", row, 3);
-        }
+        } catch (EncoderException ex) {
+            MyLogger.log("Conversion error for file: " + metaData.getPath());
+            model.setValueAt("Failed", row, 3);
+        } catch (IOException ex) {
+            MyLogger.log("Connection error for file: " + metaData.getPath());
+            model.setValueAt("Failed", row, 3);
+        } 
     }
 
 }
