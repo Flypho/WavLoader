@@ -154,17 +154,21 @@ public class WindowManager {
         
         ArrayList<String[]> results = null;
         try {
+            MyLogger.log("Searching for links...");
             DirectLinksSearcher directLinkSearcher = WebContentManagerFactory.getInstance().getDirectLinksSearcher();
             results = directLinkSearcher.searchLinks(url);
             if (results != null) {
+                MyLogger.log("Found " + results.size() + " files to download.");
                 for (String[] elem : results) {
                     populateDownloadTable(elem[1], elem[0], "Test", downloadTable);
                     int row = downloadTable.getModel().getRowCount(); 
                     new Thread(new DownloadTask(getLocation(), elem[0], "", elem[1], downloadTable.getModel(), row, url, saveOriginalFormat.isSelected(), createAlbumFolder.isSelected())).start();
                 }
+            } else {
+                MyLogger.log("No files found.");
             }
         } catch (IOException | JSONException ex) {
-            Logger.getLogger(WindowManager.class.getName()).log(Level.SEVERE, null, ex);
+            MyLogger.log("No files found.");
         }
     }
 

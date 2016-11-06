@@ -165,11 +165,11 @@ public class DownloadTask implements Runnable {
             metaData.setAlbum(param);
             metaData.setDurationInSec(10);
             metaData.setTrackName(artist + FilenameUtils.removeExtension(title));
-            //metaData.setPath(path + title);
             try {
                 metaData.setPath(createDirectPath(metaData, title, path, source, createAlbumFolder));
             } catch (IOException ex) {
                 MyLogger.log("Wrong path: " + metaData.getPath());
+                return;
             }
         } else {
             try {
