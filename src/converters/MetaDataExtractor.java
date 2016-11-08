@@ -12,7 +12,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import static jdk.nashorn.internal.objects.NativeRegExp.source;
+import models.MetaData;
 import org.jaudiotagger.audio.*;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
@@ -28,41 +28,48 @@ import view.MyLogger;
  */
 public class MetaDataExtractor {
     
-    public static void extractMetaData(String pathToFile) throws CannotReadException, IOException{
-        File file = new File(pathToFile);
+    public static MetaData extractMetaData(MetaData metaData) throws CannotReadException, IOException{
+        File file = new File(metaData.getPath());
         AudioFile audioFile;
         try {
             audioFile = AudioFileIO.read(file);
             Tag tag = audioFile.getTag();
-            System.out.println(tag.getFirst(FieldKey.TITLE));
-            System.out.println(tag.getFirst(FieldKey.ARTIST));
-            System.out.println(tag.getFirst(FieldKey.ALBUM));
-            System.out.println(getDuration(file));
+            metaData.setTrackName(tag.getFirst(FieldKey.TITLE));
+            metaData.setArtist(tag.getFirst(FieldKey.ARTIST));
+            metaData.setAlbum(tag.getFirst(FieldKey.ALBUM));
+            metaData.setDurationInSec(getDuration(file));
+            String[] tags = {tag.getFirst(FieldKey.GENRE)};
+            metaData.setTags(tags);
         } catch (TagException ex) {
-            MyLogger.log("Error reading metadata of file: " + pathToFile);
+            //MyLogger.log("Error reading metadata of file: " + pathToFile);
+            ex.printStackTrace();
         } catch (ReadOnlyFileException ex) {
-            MyLogger.log("Can't read file: " + pathToFile);
+            //MyLogger.log("Can't read file: " + pathToFile);
+            ex.printStackTrace();
         } catch (InvalidAudioFrameException ex) {
-            MyLogger.log("Unsupported format, can't read metaData");
+            //MyLogger.log("Unsupported format, can't read metaData");
+            ex.printStackTrace();
         }
+        return metaData;
     }
     
-    
-    private static int getDuration(File file) throws IOException {
-        AudioInputStream audioInputStream;
+    private static Integer getDuration(File file) throws IOException {
+        Integer duration = null;
         try {
-            audioInputStream = AudioSystem.getAudioInputStream(file);
-            AudioFormat format = audioInputStream.getFormat();
-            long frames = audioInputStream.getFrameLength();
-            double durationInSeconds = (frames + 0.0) / format.getFrameRate();
-            return (int) durationInSeconds;
-        } catch (UnsupportedAudioFileException ex) {
-            MyLogger.log("Cant pull duration from this file format: " + file.getAbsolutePath());
-            return 0;
+            AudioFile audioFile;
+            audioFile = AudioFileIO.read(file);
+            duration = audioFile.getAudioHeader().getTrackLength();
+        } catch (CannotReadException ex) {
+            Logger.getLogger(MetaDataExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TagException ex) {
+            Logger.getLogger(MetaDataExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ReadOnlyFileException ex) {
+            Logger.getLogger(MetaDataExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidAudioFrameException ex) {
+            Logger.getLogger(MetaDataExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return duration;
     }
 
-
-    
     
 }

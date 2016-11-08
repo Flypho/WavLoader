@@ -1,5 +1,6 @@
 package tasks;
 
+import converters.MetaDataExtractor;
 import converters.WavConverter;
 import database.DAOImpl;
 import database.DBHandler;
@@ -12,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.table.TableModel;
 import models.MetaData;
 import org.apache.commons.io.FilenameUtils;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.json.JSONException;
 import view.MyLogger;
 import webcontentmanager.DirectDownloader;
@@ -42,13 +44,13 @@ public class DownloadTask implements Runnable {
     private boolean createAlbumFolder;
     private boolean saveOriginalFormat;
     private boolean direct = false;
-    
+
     private String createSearchedPath(MetaData metaData, String basepath, boolean createAlbumFolder) throws IOException {
         if (basepath == null) {
             throw new IOException();
         }
         String dir;
-        if (createAlbumFolder){
+        if (createAlbumFolder) {
             dir = basepath + metaData.getArtist() + "\\" + metaData.getAlbum();
         } else {
             dir = basepath;
@@ -60,24 +62,23 @@ public class DownloadTask implements Runnable {
             }
         }
         int i = 1;
-        
-        
+
         File fileMP3 = new File(dir + "\\" + metaData.getTrackName() + ".mp3");
         File fileWav = new File(dir + "\\" + metaData.getTrackName() + ".wav");
-        while (fileMP3.exists() || fileWav.exists()){
+        while (fileMP3.exists() || fileWav.exists()) {
             fileMP3 = new File(dir + "\\" + metaData.getTrackName() + "(" + i + ")" + ".mp3");
             fileWav = new File(dir + "\\" + metaData.getTrackName() + "(" + i + ")" + ".wav");
             i++;
         }
         return fileMP3.getAbsolutePath();
     }
-    
+
     private String createDirectPath(MetaData metaData, String title, String basepath, String source, boolean createAlbumFolder) throws IOException {
         if (basepath == null) {
             throw new IOException();
         }
         String dir;
-        
+
         if (createAlbumFolder) {
             source = source.replaceFirst("^(http://www\\.|http://|www\\.)", "");
             source = source.replaceAll("^[.\\\\/:*?\"<>|]?[\\\\/:*?\"<>|]*", "");
@@ -92,12 +93,12 @@ public class DownloadTask implements Runnable {
         } else {
             dir = path;
         }
-        
+
         int i = 1;
         String tempTitle;
         File fileSource = new File(dir + "\\" + title);
         File fileWav = new File(dir + "\\" + FilenameUtils.removeExtension(title) + ".wav");
-        while (fileSource.exists() || fileWav.exists()){
+        while (fileSource.exists() || fileWav.exists()) {
             int j = title.lastIndexOf('.');
             tempTitle = title.substring(0, j) + "(" + i + ")" + title.substring(j);
             fileSource = new File(dir + tempTitle);
@@ -106,7 +107,7 @@ public class DownloadTask implements Runnable {
         }
         return fileSource.getAbsolutePath();
     }
-    
+
     private MetaData setTrackInfo(String title, String artist, MetaData metaData) {
         MetaData temp = metaData;
         try {
@@ -133,8 +134,29 @@ public class DownloadTask implements Runnable {
         }
         return temp;
     }
-    
-    public DownloadTask(String path, String param, String artist, String title, TableModel model, int row, String source, boolean saveOriginalFormat, boolean createAlbumFolder) throws IOException, JSONException{
+
+    private MetaData fillNulls(MetaData metaData) {
+        if (metaData.getArtist() == null){
+            metaData.setArtist(param);
+        }
+        if (metaData.getAlbum() == null){
+            metaData.setAlbum(param);
+        }
+        if (metaData.getDurationInSec() == null){
+            metaData.setDurationInSec(0);
+        }
+        if (metaData.getTrackName() == null){
+            metaData.setTrackName(artist + FilenameUtils.removeExtension(title));
+        }
+        String [] tags = metaData.getTags();
+        if (tags == null || (tags.length == 1 && tags[0].isEmpty())){
+            String [] newTags = {"unknown"};
+            metaData.setTags(newTags);
+        }
+        return metaData;
+    }
+
+    public DownloadTask(String path, String param, String artist, String title, TableModel model, int row, String source, boolean saveOriginalFormat, boolean createAlbumFolder) throws IOException, JSONException {
         this.path = path;
         this.param = param;
         this.model = model;
@@ -144,48 +166,53 @@ public class DownloadTask implements Runnable {
         this.row = row;
         this.createAlbumFolder = createAlbumFolder;
         this.saveOriginalFormat = saveOriginalFormat;
-        if (source == "YouTube")
+        if (source == "YouTube") {
             songDownloader = new YouTubeDownloader();
-        else if (source == "SoundCloud")
+        } else if (source == "SoundCloud") {
             songDownloader = new SoundCloudDownloader();
-        else {
+        } else {
             direct = true;
             songDownloader = new DirectDownloader();
         }
-        model.setValueAt("Proc metadata", model.getRowCount()-1, 3);
+        model.setValueAt("Proc metadata", model.getRowCount() - 1, 3);
     }
-    
-    
+
     @Override
     public void run() {
         final int row = this.row - 1;//model.getRowCount() - 1;
         MetaData metaData = new MetaData();
-        if (direct){
-            metaData.setArtist(param);
-            metaData.setAlbum(param);
-            metaData.setDurationInSec(10);
-            metaData.setTrackName(artist + FilenameUtils.removeExtension(title));
+        if (!direct) {
+            try {
+                metaData = setTrackInfo(title, artist, metaData);
+                metaData.setPath(createSearchedPath(metaData, path, createAlbumFolder));
+            } catch (IOException ex) {
+                MyLogger.log("Error while creating folders for: " + metaData.getPath());
+                return;
+            }
+        } else {
             try {
                 metaData.setPath(createDirectPath(metaData, title, path, source, createAlbumFolder));
             } catch (IOException ex) {
                 MyLogger.log("Wrong path: " + metaData.getPath());
                 return;
             }
-        } else {
-            try {
-            metaData = setTrackInfo(title, artist, metaData);
-            metaData.setPath(createSearchedPath(metaData, path, createAlbumFolder));
-            } catch (IOException ex) {
-                MyLogger.log("Error while creating folders for: " + metaData.getPath());
-            }
         }
         try {
             model.setValueAt("Downloading", row, 3);
-            if (this.songDownloader.downloadSong(metaData.getPath(), param, model, row) == -1){
+            if (this.songDownloader.downloadSong(metaData.getPath(), param, model, row) == -1) {
                 new File(metaData.getPath()).delete();
                 model.setValueAt("Failed", row, 3);
                 MyLogger.log("Connection error for file: " + metaData.getPath());
                 return;
+            }
+            if (direct) {
+                try {
+                    metaData = MetaDataExtractor.extractMetaData(metaData);
+                } catch (CannotReadException ex) {
+                    ;
+                } finally {
+                    metaData = fillNulls(metaData);
+                }
             }
             model.setValueAt("Wav converting", row, 3);
             WavConverter.mp3ToWav(metaData.getPath(), FilenameUtils.removeExtension(metaData.getPath()) + ".wav");
@@ -206,7 +233,7 @@ public class DownloadTask implements Runnable {
         } catch (IOException ex) {
             MyLogger.log("Connection error for file: " + metaData.getPath());
             model.setValueAt("Failed", row, 3);
-        } 
+        }
     }
 
 }
